@@ -45,13 +45,27 @@ class IPMap(object):
         self.b.set(ipl, val)
 
 
-b = Bitmap()
+import sys
 runs = 0
-for i in range(1, 100000000, 1000):
-    runs += 3
-    b.get(i)
-    b.set(i, True)
-    b.get(i)
+str_buffer = ""
+
+host = '0.0.0.0'
+port = 8030
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((host, port,))
+
+# = 300,000 iterations
+for a in range(1, 1251):
+
+    for i in range(1, 241):
+        runs += 1
+        str_buffer += struct.pack("Ic", i*a, 's')
+
+    s.sendall(str_buffer)
+    str_buffer = ""
+    s.recv(1250)
+
+s.close()
 
 print "Made %d individual calls to the server" % runs
 

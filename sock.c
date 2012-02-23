@@ -102,7 +102,6 @@ void* socketHandler(struct SHArgs *shargs) {
 
     send(*clientSocket, &rsp, packetLen, 0);
   }
-  return NULL;
   shutdown(*clientSocket, SHUT_WR);
   close(*clientSocket);
 
@@ -138,6 +137,8 @@ int main(int argc, char *argv[]) {
   hostSocketInitAndBind(&hostSocket, &myAddr, port);
 
   printf("Awaiting connections.\n");
+
+  sigset(SIGPIPE, SIG_IGN);
 
   while (1)
   {
