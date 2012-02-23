@@ -10,7 +10,8 @@ Take a look at bitmap.py... That's the client I wrote.
 The bit array code I stole from Sam Hocevar. Thanks!
 
 TODO:
-check for mem leaks
-handle batched network IO on the server side.
-learn C better.
+
+* check for mem leaks
+* handle batched network IO on the server side.
+* learn C better.
 
