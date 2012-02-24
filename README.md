@@ -59,9 +59,9 @@ enough queries to fill a packet, and then ships the packet to the server
 
 ### How to use:
 
-   cd fido
-   make
-   ./fido
+    cd fido
+    make
+    ./fido
 
 
 Todo
@@ -70,9 +70,9 @@ Todo
 * Create new thread to persist bitmap to disk.
 * Handle command line arguments.
 * Error handling
-** Don't allocate more sockets than available memory.
-** Don't allocate a larger bitmap than available memory.
-** Handle case where invalid input is given.
+  * Don't allocate more sockets than available memory.
+  * Don't allocate a larger bitmap than available memory.
+  * Handle case where invalid input is given.
 * Batch sending of responses on the server side.
 
 
