@@ -49,9 +49,9 @@ enough queries to fill a packet, and then ships the packet to the server
 
 ### How to use:
 
-   cd fido
-   make
-   ./fido
+    cd fido
+    make
+    ./fido
 
 
 Todo
