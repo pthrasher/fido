@@ -1,6 +1,6 @@
-OBJS = sock.o bit-array.o
+OBJS = fido.o bit-array.o
 
-sock: $(OBJS)
+fido: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^
 
 %.o: %.c
@@ -9,4 +9,4 @@ sock: $(OBJS)
 clean:
 	rm $(OBJS)
 
-.PHONY: sock clean
+.PHONY: fido clean

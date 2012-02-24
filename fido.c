@@ -44,11 +44,6 @@ void hostSocketInitAndBind(int *hostSocket, struct sockaddr_in *hostAddr, int po
 
 struct message {
   bit_array_num_t offset;
-  char action;
-};
-
-struct response {
-  bit_array_num_t  offset;
   char val;
 };
 
@@ -66,7 +61,7 @@ void* socketHandler(struct SHArgs *shargs) {
   int byteCount;
 
   struct message msg;
-  struct response rsp;
+  struct message rsp;
 
   char read_char = 'r';
   char set_char = 's';
@@ -81,18 +76,18 @@ void* socketHandler(struct SHArgs *shargs) {
     rsp.offset = msg.offset;
     rsp.val = error_char;
 
-    if (msg.action == read_char) {
+    if (msg.val == read_char) {
       /* printf("read\n"); */
       if(bit_array_test(bits, msg.offset)) {
         rsp.val = set_char;
       } else {
         rsp.val = unset_char;
       }
-    } else if (msg.action == set_char){
+    } else if (msg.val == set_char){
       /* printf("set\n"); */
       bit_array_set_true(bits, msg.offset);
       rsp.val = set_char;
-    } else if (msg.action == unset_char) {
+    } else if (msg.val == unset_char) {
       /* printf("unset\n"); */
       bit_array_set_false(bits, msg.offset);
       rsp.val = unset_char;
