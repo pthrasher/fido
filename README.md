@@ -13,6 +13,16 @@ versions of Redis also offer this functionality in the form of Redis Bitmaps,
 however, Redis also does quite a bit more. If you just need bitmaps, and the
 ability to query / manipulate them across a network, then Fido is for you.
 
+### What's with the name?
+
+If you're read "Snow Crash" by Neal Stephenson, you've heard of the character
+Fido. For those who've not. Here's a brief description:
+
+> Fido is what is known as a "Rat Thing", a cybernetic security dog employed by
+> Mr. Lee's Greater Hong Kong, who was once a pit bull terrier puppy owned by
+> Y.T. Capable of running at supersonic speed, Fido, like other Rat Things, keeps
+> Mr Lee's franchulates safe against illegal use of weapons.
+
 
 Current Status
 --------------
