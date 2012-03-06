@@ -3,156 +3,7 @@
     Distributed under the MIT License (see accompanying file LICENSE
     or a copy at http://www.opensource.org/licenses/MIT
 */
-// Needed by sigset:
-#include <fcntl.h>
-#include <signal.h>
-
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <getopt.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <pthread.h>   // Needed for threading.
-#include <arpa/inet.h> // Needed for socket stuff.
-#include <string.h>    // Needed for memset
-#include <stdarg.h>
-
 #include "fido.h"
-#include "bit-array.h"
-
-
-void get_args(fido_args *arg_out, int argc, char *argv[]) {
-  int c;
-  struct in_addr host_addr;
-  int port = 0;
-  long size = 0;
-
-  enum { MAX = 4294967295, MIN = 1 };
-
-  while ((c = getopt (argc, argv, "a:p:s:")) != -1)
-  {
-    switch (c)
-    {
-      case 'a':
-        /* Address */
-
-        if (inet_aton(optarg, &host_addr) != 0)
-        {
-          arg_out->address = host_addr.s_addr;
-        }
-        else
-        {
-          oh_noes("I couldn't quite parse that IPAddr, Jim. (%s)", optarg);
-        }
-
-        /* No error, proceed */
-        arg_out->origaddress = strdup(optarg);
-        arg_out->address = host_addr.s_addr;
-        break;
-      case 'p':
-        /* Port */
-
-        port = atoi(optarg);
-
-        /* No error, proceed */
-        arg_out->origport = strdup(optarg);
-        arg_out->port = htons(port);
-        break;
-      case 's':
-        /* Size */
-        size = atol(optarg);
-
-        if (size > MAX || size < MIN) {
-          oh_noes("You must specify *at least* a size of 1, and no more than %u\n", MAX);
-        }
-
-        /* No error, proceed */
-        arg_out->size = (bit_array_num_t)size;
-        break;
-      case '?':
-        if (optopt == 'c' || optopt == 'a' || optopt == 's')
-          fprintf (stderr, "Option -%c requires an argument.\n", optopt);
-        else if (isprint (optopt))
-          fprintf (stderr, "Unknown option `-%c'.\n", optopt);
-        else
-          fprintf (stderr,
-              "Unknown option character `\\x%x'.\n",
-              optopt);
-        break;
-      default:
-        abort ();
-    }
-  }
-}
-
-
-// Ring Buffer stuff.
-//
-
-void rbm_init(message_ring_buffer *rbm, int size, size_t elemsize) {
-    rbm->size  = size + 1; /* include empty elem */
-    rbm->start = 0;
-    rbm->end   = 0;
-    rbm->elems = (void *)calloc(rbm->size, elemsize);
-}
-
-void rbm_free(message_ring_buffer *rbm) {
-    free(rbm->elems); /* OK if null */ }
-
-int rbm_is_full(message_ring_buffer *rbm) {
-    return (rbm->end + 1) % rbm->size == rbm->start; }
-
-int rbm_is_empty(message_ring_buffer *rbm) {
-    return rbm->end == rbm->start; }
-
-/* Write an element, overwriting oldest element if buffer is full. App can
-   choose to avoid the overwrite by checking rbmIsFull(). */
-void rbm_write(message_ring_buffer *rbm, fido_message *elem) {
-    rbm->elems[rbm->end] = *elem;
-    rbm->end = (rbm->end + 1) % rbm->size;
-    if (rbm->end == rbm->start)
-        rbm->start = (rbm->start + 1) % rbm->size; /* full, overwrite */
-}
-
-/* Read oldest element. App must ensure !rbmIsEmpty() first. */
-void rbm_read(message_ring_buffer *rbm, fido_message *elem) {
-    *elem = rbm->elems[rbm->start];
-    rbm->start = (rbm->start + 1) % rbm->size;
-}
-//--------------------------------------------------
-void rbr_init(response_ring_buffer *rbr, int size, size_t elemsize) {
-    rbr->size  = size + 1; /* include empty elem */
-    rbr->start = 0;
-    rbr->end   = 0;
-    rbr->elems = (void *)calloc(rbr->size, elemsize);
-}
-
-void rbr_free(response_ring_buffer *rbr) {
-    free(rbr->elems); /* OK if null */ }
-
-int rbr_is_full(response_ring_buffer *rbr) {
-    return (rbr->end + 1) % rbr->size == rbr->start; }
-
-int rbr_is_empty(response_ring_buffer *rbr) {
-    return rbr->end == rbr->start; }
-
-/* Write an element, overwriting oldest element if buffer is full. App can
-   choose to avoid the overwrite by checking rbrIsFull(). */
-void rbr_write(response_ring_buffer *rbr, fido_response *elem) {
-    rbr->elems[rbr->end] = *elem;
-    rbr->end = (rbr->end + 1) % rbr->size;
-    if (rbr->end == rbr->start)
-        rbr->start = (rbr->start + 1) % rbr->size; /* full, overwrite */
-}
-
-/* Read oldest element. App must ensure !rbrIsEmpty() first. */
-void rbr_read(response_ring_buffer *rbr, fido_response *elem) {
-    *elem = rbr->elems[rbr->start];
-    rbr->start = (rbr->start + 1) % rbr->size;
-}
-
 
 void server_init(int *hostSocket, struct sockaddr_in *hostAddr, uint32_t address, uint32_t port) {
 
@@ -201,7 +52,7 @@ int sendall(int s, void *buf, int *len) {
 
 void *socket_handler(socket_args *args) {
   int *client_socket = args->client_socket;
-  bit_array_t *bits = args->bits;
+  bitmap_t *bits = args->bits;
 
   int packetLen = 5;
   int byte_count;
@@ -328,7 +179,7 @@ void *socket_handler(socket_args *args) {
           // have to convert the offset as the state is a char (1 byte) and not
           // affected by endieness.
           // Network Byte Order to Host Long cast as proper type.
-          msg.offset = (bit_array_num_t)ntohl(msg.offset);
+          msg.offset = (bitmapnum_t)ntohl(msg.offset);
           if (msg.offset > bits->num_bits) {
             // Either the client has sent us the data in the wrong format, or
             // they're asking for something out of bounds. Either way, we're
@@ -392,7 +243,7 @@ void *socket_handler(socket_args *args) {
       switch (tmp_msg.state) {
         case 'r':
         case 'R':
-          if(bit_array_test(bits, tmp_msg.offset)) {
+          if(bitmap_test(bits, tmp_msg.offset)) {
             rsp.state = set_char;
           } else {
             rsp.state = unset_char;
@@ -401,7 +252,7 @@ void *socket_handler(socket_args *args) {
         case 's':
         case 'S':
           bit_array_set_true(bits, tmp_msg.offset);
-          if(bit_array_test(bits, tmp_msg.offset)) {
+          if(bitmap_test(bits, tmp_msg.offset)) {
             rsp.state = set_char;
           } else {
             rsp.state = error_char;
@@ -410,7 +261,7 @@ void *socket_handler(socket_args *args) {
         case 'u':
         case 'U':
           bit_array_set_false(bits, tmp_msg.offset);
-          if(bit_array_test(bits, tmp_msg.offset)) {
+          if(bitmap_test(bits, tmp_msg.offset)) {
             rsp.state = error_char;
           } else {
             rsp.state = unset_char;
@@ -501,7 +352,6 @@ void *socket_handler(socket_args *args) {
   return NULL;
 }
 
-
 int main(int argc, char *argv[]) {
   fido_args args;
 
@@ -515,10 +365,11 @@ int main(int argc, char *argv[]) {
   welcome_msg();
   version_msg();
 
-  fprintf(stderr, "Port: %s\nBinding Address: %s\nBitmap Size: %u\n",
+  print_msg("Port: %s\nBinding Address: %s\nBitmap Size: %u\n",
       args.origport, args.origaddress, args.size);
 
-  bit_array_t bits;
+  // Set up the bitmap.
+  bitmap_t bits;
   bit_array_init(&bits);
   bit_array_set_num_bits(&bits, args.size);
   bit_array_set_all_false(&bits);
