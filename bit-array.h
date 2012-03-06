@@ -1,11 +1,11 @@
-// This program is free software. It comes without any warranty, to the extent
-// permitted by applicable law. You can redistribute it and/or modify it under
-// the terms of the Do What The Fuck You Want To Public License, Version 2, as
-// published by Sam Hocevar. See http://sam.zoy.org/wtfpl/COPYING for more
-// details.
+/*
+    Copyright 2012 Philip Thrasher
+    Distributed under the MIT License (see accompanying file LICENSE
+    or a copy at http://www.opensource.org/licenses/MIT
+*/
 
-#ifndef BIT_ARRAY_H
-#define BIT_ARRAY_H
+#ifndef _bit_array_h
+#define _bit_array_h
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -20,10 +20,10 @@ extern "C" {
 typedef uintmax_t bit_array_slot_t;
 
 // The integer type used to index individual bits.
-typedef uint32_t bit_array_idx_t;
+typedef uintmax_t bit_array_idx_t;
 
 // The integer type used for misc numbers.
-typedef uint32_t bit_array_num_t;
+typedef uintmax_t bit_array_num_t;
 
 typedef struct bit_array_t {
   bit_array_slot_t *slots;

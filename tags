@@ -1,0 +1,206 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ALL_FALSE_BIT_MASK	bit-array.c	/^enum { ALL_FALSE_BIT_MASK = 0 };$/;"	e	file:
+ALL_TRUE_BIT_MASK	bit-array.c	/^enum { ALL_TRUE_BIT_MASK = UINTMAX_MAX };$/;"	e	file:
+ANSI_COLOR_BLUE	fido.h	/^#define ANSI_COLOR_BLUE /;"	d
+ANSI_COLOR_BLUE	fido2.c	/^#define ANSI_COLOR_BLUE /;"	d	file:
+ANSI_COLOR_CYAN	fido.h	/^#define ANSI_COLOR_CYAN /;"	d
+ANSI_COLOR_CYAN	fido2.c	/^#define ANSI_COLOR_CYAN /;"	d	file:
+ANSI_COLOR_GREEN	fido.h	/^#define ANSI_COLOR_GREEN /;"	d
+ANSI_COLOR_GREEN	fido2.c	/^#define ANSI_COLOR_GREEN /;"	d	file:
+ANSI_COLOR_MAGENTA	fido.h	/^#define ANSI_COLOR_MAGENTA /;"	d
+ANSI_COLOR_MAGENTA	fido2.c	/^#define ANSI_COLOR_MAGENTA /;"	d	file:
+ANSI_COLOR_RED	fido.h	/^#define ANSI_COLOR_RED /;"	d
+ANSI_COLOR_RED	fido2.c	/^#define ANSI_COLOR_RED /;"	d	file:
+ANSI_COLOR_RESET	fido.h	/^#define ANSI_COLOR_RESET /;"	d
+ANSI_COLOR_RESET	fido2.c	/^#define ANSI_COLOR_RESET /;"	d	file:
+ANSI_COLOR_YELLOW	fido.h	/^#define ANSI_COLOR_YELLOW /;"	d
+ANSI_COLOR_YELLOW	fido2.c	/^#define ANSI_COLOR_YELLOW /;"	d	file:
+BITS_PER_SLOT	bit-array.c	/^enum { BITS_PER_SLOT = CHAR_BIT * sizeof(bit_array_slot_t) };$/;"	e	file:
+CFLAGS	Makefile	/^CFLAGS=-Wall -g -ggdb$/;"	m
+FIDO_VERSION	version.h	/^#define FIDO_VERSION /;"	d
+FidoAPI	fido.py	/^class FidoAPI(object):$/;"	c
+IPMap	fido.py	/^class IPMap(object):$/;"	c
+OBJS	Makefile	/^OBJS = fido.o bit-array.o$/;"	m
+PORT	selectserver.c	/^#define PORT /;"	d	file:
+__STDC_LIMIT_MACROS	bit-array.c	/^#define __STDC_LIMIT_MACROS$/;"	d	file:
+__dbg_h__	dbg.h	/^#define __dbg_h__$/;"	d
+__fidonetworking_h	network.h	/^#define __fidonetworking_h$/;"	d
+__fidonetworking_h	networking.h	/^#define __fidonetworking_h$/;"	d
+__init__	fido.py	/^    def __init__(self):$/;"	m
+__init__	fido.py	/^    def __init__(self, api_host='0.0.0.0', api_port=8030):$/;"	m
+_bit_array_h	bit-array.h	/^#define _bit_array_h$/;"	d
+_fido_h	fido.h	/^#define _fido_h$/;"	d
+_fido_h	fido2.h	/^#define _fido_h$/;"	d
+_protocol_h	protocol.h	/^#define _protocol_h$/;"	d
+_protocol_h	server.h	/^#define _protocol_h$/;"	d
+_readDataFromClient	network.c	/^int _readDataFromClient(fidoClient* c) {$/;"	f
+_readDataFromClient	networking.c	/^int _readDataFromClient(fidoClient* c) {$/;"	f
+_storage_h	storage.h	/^#define _storage_h$/;"	d
+address	fido.h	/^  uint32_t address;$/;"	m
+address	fido2.c	/^  uint32_t address;$/;"	m	file:
+allocate_slots_for	bit-array.c	/^static inline bit_array_slot_t *allocate_slots_for(bit_array_t *array) {$/;"	f	file:
+ascii_logo	logo.h	/^char *ascii_logo = $/;"	v
+bit_array_destroy	bit-array.c	/^void bit_array_destroy(bit_array_t *array) {$/;"	f
+bit_array_idx_t	bit-array.h	/^typedef uintmax_t bit_array_idx_t;$/;"	t
+bit_array_init	bit-array.c	/^void bit_array_init(bit_array_t *array) {$/;"	f
+bit_array_num_bits	bit-array.h	/^static inline bit_array_num_t bit_array_num_bits(const bit_array_t *array) {$/;"	f
+bit_array_num_t	bit-array.h	/^typedef uintmax_t bit_array_num_t;$/;"	t
+bit_array_set_all_false	bit-array.c	/^void bit_array_set_all_false(bit_array_t *array) {$/;"	f
+bit_array_set_all_true	bit-array.c	/^void bit_array_set_all_true(bit_array_t *array) {$/;"	f
+bit_array_set_false	bit-array.c	/^void bit_array_set_false(bit_array_t *array, const bit_array_idx_t nth_bit) {$/;"	f
+bit_array_set_num_bits	bit-array.c	/^bool bit_array_set_num_bits(bit_array_t *array, const bit_array_num_t num_bits)$/;"	f
+bit_array_set_true	bit-array.c	/^void bit_array_set_true(bit_array_t *array, const bit_array_idx_t nth_bit) {$/;"	f
+bit_array_slot_t	bit-array.h	/^typedef uintmax_t bit_array_slot_t;$/;"	t
+bit_array_t	bit-array.h	/^typedef struct bit_array_t {$/;"	s
+bit_array_t	bit-array.h	/^} bit_array_t;$/;"	t	typeref:struct:bit_array_t
+bit_array_test	bit-array.c	/^bool bit_array_test(const bit_array_t *array, const bit_array_idx_t nth_bit) {$/;"	f
+bit_array_test_all_false	bit-array.c	/^bool bit_array_test_all_false(const bit_array_t *array) {$/;"	f
+bit_array_test_all_true	bit-array.c	/^bool bit_array_test_all_true(const bit_array_t *array) {$/;"	f
+bit_array_test_any_false	bit-array.c	/^bool bit_array_test_any_false(const bit_array_t *array) {$/;"	f
+bit_array_test_any_true	bit-array.c	/^bool bit_array_test_any_true(const bit_array_t *array) {$/;"	f
+bit_array_to_string	bit-array.c	/^size_t bit_array_to_string(const bit_array_t *array, char *buffer,$/;"	f
+bit_array_toggle	bit-array.c	/^void bit_array_toggle(bit_array_t *array, const bit_array_idx_t nth_bit) {$/;"	f
+bit_array_toggle_all	bit-array.c	/^void bit_array_toggle_all(bit_array_t *array) {$/;"	f
+bit_mask_for	bit-array.c	/^static inline bit_array_slot_t bit_mask_for(const bit_array_idx_t nth_bit) {$/;"	f	file:
+bits	fido.h	/^    bit_array_t *bits;$/;"	m
+bits	protocol.h	/^  bit_array_t *bits;$/;"	m
+byte_count	fido.py	/^    byte_count = 0 # reset our byte count to 0$/;"	v
+byte_count	fido.py	/^    byte_count = 0$/;"	v
+byte_count	redis.py	/^            byte_count = 0 # reset our byte count to 0$/;"	v
+byte_count	redis.py	/^    byte_count = 0 # reset our byte count to 0$/;"	v
+byte_count	redis.py	/^    byte_count = 0$/;"	v
+check	dbg.h	/^#define check(/;"	d
+check_debug	dbg.h	/^#define check_debug(/;"	d
+check_mem	dbg.h	/^#define check_mem(/;"	d
+clean_errno	dbg.h	/^#define clean_errno(/;"	d
+client_socket	fido.h	/^    int *client_socket;$/;"	m
+createSingleFDSet	network.c	/^fd_set createSingleFDSet(int* fd) {$/;"	f
+createSingleFDSet	networking.c	/^fd_set createSingleFDSet(int* fd) {$/;"	f
+debug	dbg.h	/^#define debug(/;"	d
+destroy_socket	protocol.c	/^void destroy_socket(int *socket) {$/;"	f
+elems	fido.h	/^    fido_message *elems; \/* vector of elements                   *\/$/;"	m
+elems	fido.h	/^    fido_response *elems; \/* vector of elements                   *\/$/;"	m
+end	fido.h	/^    int           end;    \/* index at which to write new element  *\/$/;"	m
+end	fido.h	/^    int          end;    \/* index at which to write new element  *\/$/;"	m
+fd	network.h	/^  int* fd;$/;"	m
+fd	networking.h	/^  int* fd;$/;"	m
+fidoClient	network.h	/^typedef struct fidoClient {$/;"	s
+fidoClient	network.h	/^} fidoClient;$/;"	t	typeref:struct:fidoClient
+fidoClient	networking.h	/^typedef struct fidoClient {$/;"	s
+fidoClient	networking.h	/^} fidoClient;$/;"	t	typeref:struct:fidoClient
+fidoClientEventLoop	network.c	/^void* fidoClientEventLoop(fidoClient* c) {$/;"	f
+fidoClientEventLoop	networking.c	/^void* fidoClientEventLoop(fidoClient* c) {$/;"	f
+fido_args	fido.h	/^typedef struct fido_args {$/;"	s
+fido_args	fido.h	/^} fido_args;$/;"	t	typeref:struct:fido_args
+fido_args	fido2.c	/^typedef struct fido_args {$/;"	s	file:
+fido_args	fido2.c	/^} fido_args;$/;"	t	typeref:struct:fido_args	file:
+fido_message	fido.h	/^typedef struct fido_message {$/;"	s
+fido_message	fido.h	/^} fido_message;$/;"	t	typeref:struct:fido_message
+fido_message_t	protocol.h	/^typedef struct fido_message_t {$/;"	s
+fido_message_t	protocol.h	/^} fido_message_t;$/;"	t	typeref:struct:fido_message_t
+fido_response	fido.h	/^typedef struct fido_response {$/;"	s
+fido_response	fido.h	/^} fido_response;$/;"	t	typeref:struct:fido_response
+fido_socket_handler	protocol.c	/^void fido_socket_handler(socket_and_bits_t sab) {$/;"	f
+format_redis_msg	redis.py	/^def format_redis_msg(msg):$/;"	f
+get	fido.py	/^    def get(self, offset):$/;"	m
+get_args	fido.c	/^void get_args(fido_args *arg_out, int argc, char *argv[]) {$/;"	f
+get_args	fido2.c	/^void get_args(fido_args *arg_out, int argc, char *argv[])$/;"	f
+get_in_addr	selectserver.c	/^void *get_in_addr(struct sockaddr *sa)$/;"	f
+has_ip	fido.py	/^    def has_ip(self, ipaddr):$/;"	m
+host	fido.py	/^    host = '0.0.0.0'$/;"	v
+host	redis.py	/^    host = 'localhost'$/;"	v
+initial_bit	bit-array.c	/^static inline bit_array_slot_t initial_bit(void) {$/;"	f	file:
+ip2long	fido.py	/^    def ip2long(ip):$/;"	m
+isFDReady	network.c	/^int isFDReady(int* fd, char rw) {$/;"	f
+isFDReady	networking.c	/^int isFDReady(int* fd, char rw) {$/;"	f
+log_err	dbg.h	/^#define log_err(/;"	d
+log_info	dbg.h	/^#define log_info(/;"	d
+log_warn	dbg.h	/^#define log_warn(/;"	d
+main	fido.c	/^int main(int argc, char *argv[]) {$/;"	f
+main	fido2.c	/^int main(int argc, char *argv[])$/;"	f
+main	selectserver.c	/^int main(void)$/;"	f
+mark_ip	fido.py	/^    def mark_ip(self, ipaddr, val):$/;"	m
+message_ring_buffer	fido.h	/^typedef struct message_ring_buffer {$/;"	s
+message_ring_buffer	fido.h	/^} message_ring_buffer;$/;"	t	typeref:struct:message_ring_buffer
+min	bit-array.c	/^static inline bit_array_num_t min(const bit_array_num_t a,$/;"	f	file:
+num_bits	bit-array.h	/^  bit_array_num_t num_bits;$/;"	m
+num_slots	bit-array.h	/^  bit_array_num_t num_slots;$/;"	m
+num_slots_for	bit-array.c	/^static inline bit_array_num_t num_slots_for(const bit_array_num_t num_bits) {$/;"	f	file:
+offset	fido.h	/^  bit_array_num_t offset;$/;"	m
+offset	protocol.h	/^  bit_array_num_t offset;$/;"	m
+oh_noes	fido.h	/^#define oh_noes(/;"	d
+oh_noes	fido2.c	/^#define oh_noes(/;"	d	file:
+oh_noes_msg	fido.h	/^#define oh_noes_msg(/;"	d
+oh_noes_msg	fido2.c	/^void oh_noes_msg()$/;"	f
+ohnoes	fido.h	/^char *ohnoes = $/;"	v
+ohnoes	ohnoes.h	/^char *ohnoes = $/;"	v
+origaddress	fido.h	/^  char *origaddress;$/;"	m
+origaddress	fido2.c	/^  char *origaddress;$/;"	m	file:
+origport	fido.h	/^  char *origport;$/;"	m
+origport	fido2.c	/^  char *origport;$/;"	m	file:
+port	fido.h	/^  uint32_t port;$/;"	m
+port	fido.py	/^    port = 8030$/;"	v
+port	fido2.c	/^  uint32_t port;$/;"	m	file:
+port	redis.py	/^    port = 6379$/;"	v
+print_msg	fido.h	/^void print_msg(const char *msg, ...) {$/;"	f
+print_msg	fido2.c	/^void print_msg(const char *msg, ...) {$/;"	f
+rbm_free	fido.c	/^void rbm_free(message_ring_buffer *rbm) {$/;"	f
+rbm_init	fido.c	/^void rbm_init(message_ring_buffer *rbm, int size, size_t elemsize) {$/;"	f
+rbm_is_empty	fido.c	/^int rbm_is_empty(message_ring_buffer *rbm) {$/;"	f
+rbm_is_full	fido.c	/^int rbm_is_full(message_ring_buffer *rbm) {$/;"	f
+rbm_read	fido.c	/^void rbm_read(message_ring_buffer *rbm, fido_message *elem) {$/;"	f
+rbm_write	fido.c	/^void rbm_write(message_ring_buffer *rbm, fido_message *elem) {$/;"	f
+rbr_free	fido.c	/^void rbr_free(response_ring_buffer *rbr) {$/;"	f
+rbr_init	fido.c	/^void rbr_init(response_ring_buffer *rbr, int size, size_t elemsize) {$/;"	f
+rbr_is_empty	fido.c	/^int rbr_is_empty(response_ring_buffer *rbr) {$/;"	f
+rbr_is_full	fido.c	/^int rbr_is_full(response_ring_buffer *rbr) {$/;"	f
+rbr_read	fido.c	/^void rbr_read(response_ring_buffer *rbr, fido_response *elem) {$/;"	f
+rbr_write	fido.c	/^void rbr_write(response_ring_buffer *rbr, fido_response *elem) {$/;"	f
+response_ring_buffer	fido.h	/^typedef struct response_ring_buffer {$/;"	s
+response_ring_buffer	fido.h	/^} response_ring_buffer;$/;"	t	typeref:struct:response_ring_buffer
+runs	fido.py	/^    runs = 0 # We're going to count how many queries we sent to the api.$/;"	v
+runs	redis.py	/^    runs = 0 # We're going to count how many queries we sent to the api.$/;"	v
+s	fido.py	/^    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)$/;"	v
+s	redis.py	/^    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)$/;"	v
+sendall	fido.c	/^int sendall(int s, void *buf, int *len) {$/;"	f
+sentinel	dbg.h	/^#define sentinel(/;"	d
+server_init	fido.c	/^void server_init(int *hostSocket, struct sockaddr_in *hostAddr, uint32_t address, uint32_t port) {$/;"	f
+set	fido.py	/^    def set(self, offset, value):$/;"	m
+size	fido.h	/^    int           size;   \/* maximum number of elements           *\/$/;"	m
+size	fido.h	/^    int          size;   \/* maximum number of elements           *\/$/;"	m
+size	fido.h	/^  bit_array_num_t size;$/;"	m
+size	fido2.c	/^  bit_array_num_t size;$/;"	m	file:
+slot_for	bit-array.c	/^static inline bit_array_idx_t slot_for(const bit_array_idx_t nth_bit) {$/;"	f	file:
+slots	bit-array.h	/^  bit_array_slot_t *slots;$/;"	m
+socket	protocol.h	/^  int *socket;$/;"	m
+socket_and_bits_t	protocol.h	/^typedef struct socket_and_bits_t {$/;"	s
+socket_and_bits_t	protocol.h	/^} socket_and_bits_t;$/;"	t	typeref:struct:socket_and_bits_t
+socket_args	fido.h	/^typedef struct socket_args {$/;"	s
+socket_args	fido.h	/^} socket_args;$/;"	t	typeref:struct:socket_args
+socket_handler	fido.c	/^void *socket_handler(socket_args *args) {$/;"	f
+start	fido.h	/^    int           start;  \/* index of oldest element              *\/$/;"	m
+start	fido.h	/^    int          start;  \/* index of oldest element              *\/$/;"	m
+state	fido.h	/^  char state;$/;"	m
+state	protocol.h	/^  char state;$/;"	m
+str_	redis.py	/^        str_ = "*3\\r\\n$6\\r\\nGETBIT\\r\\n$4\\r\\nfido\\r\\n$%d\\r\\n%d\\r\\n" % (len(str(a)), a,)$/;"	v
+str_buffer	fido.py	/^    str_buffer = "" # Empty out the buffer.$/;"	v
+str_buffer	fido.py	/^    str_buffer = "" # empty buffer for what will be sent to the server.$/;"	v
+str_buffer	redis.py	/^            str_buffer = "" # Empty out the buffer.$/;"	v
+str_buffer	redis.py	/^    str_buffer = "" # Empty out the buffer.$/;"	v
+str_buffer	redis.py	/^    str_buffer = "" # empty buffer for what will be sent to the server.$/;"	v
+usage	fido.h	/^char *usage = $/;"	v
+usage	usage.h	/^char *usage = "fido [-a ipaddress] [-p port] [-s bitmapsize]\\n";$/;"	v
+usage_exit	fido.h	/^#define usage_exit(/;"	d
+usage_msg	fido.h	/^#define usage_msg(/;"	d
+usage_msg	fido2.c	/^void usage_msg()$/;"	f
+version_msg	fido.h	/^#define version_msg(/;"	d
+version_msg	fido2.c	/^void version_msg()$/;"	f
+versionmsg	fido.h	/^char *versionmsg =$/;"	v
+welcome	fido.h	/^char *welcome = $/;"	v
+welcome_msg	fido.h	/^#define welcome_msg(/;"	d
+welcome_msg	fido2.c	/^void welcome_msg()$/;"	f

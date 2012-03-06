@@ -1,20 +1,160 @@
+/*
+    Copyright 2012 Philip Thrasher
+    Distributed under the MIT License (see accompanying file LICENSE
+    or a copy at http://www.opensource.org/licenses/MIT
+*/
+// Needed by sigset:
 #include <fcntl.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <stdio.h>
-#include <netinet/in.h>
-#include <resolv.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <stdbool.h>
+#include <signal.h>
 
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <pthread.h>   // Needed for threading.
+#include <arpa/inet.h> // Needed for socket stuff.
+#include <string.h>    // Needed for memset
+#include <stdarg.h>
+
+#include "fido.h"
 #include "bit-array.h"
 
-void hostSocketInitAndBind(int *hostSocket, struct sockaddr_in *hostAddr, int port) {
+
+void get_args(fido_args *arg_out, int argc, char *argv[]) {
+  int c;
+  struct in_addr host_addr;
+  int port = 0;
+  long size = 0;
+
+  enum { MAX = 4294967295, MIN = 1 };
+
+  while ((c = getopt (argc, argv, "a:p:s:")) != -1)
+  {
+    switch (c)
+    {
+      case 'a':
+        /* Address */
+
+        if (inet_aton(optarg, &host_addr) != 0)
+        {
+          arg_out->address = host_addr.s_addr;
+        }
+        else
+        {
+          oh_noes("I couldn't quite parse that IPAddr, Jim. (%s)", optarg);
+        }
+
+        /* No error, proceed */
+        arg_out->origaddress = strdup(optarg);
+        arg_out->address = host_addr.s_addr;
+        break;
+      case 'p':
+        /* Port */
+
+        port = atoi(optarg);
+
+        /* No error, proceed */
+        arg_out->origport = strdup(optarg);
+        arg_out->port = htons(port);
+        break;
+      case 's':
+        /* Size */
+        size = atol(optarg);
+
+        if (size > MAX || size < MIN) {
+          oh_noes("You must specify *at least* a size of 1, and no more than %u\n", MAX);
+        }
+
+        /* No error, proceed */
+        arg_out->size = (bit_array_num_t)size;
+        break;
+      case '?':
+        if (optopt == 'c' || optopt == 'a' || optopt == 's')
+          fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+        else if (isprint (optopt))
+          fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+        else
+          fprintf (stderr,
+              "Unknown option character `\\x%x'.\n",
+              optopt);
+        break;
+      default:
+        abort ();
+    }
+  }
+}
+
+
+// Ring Buffer stuff.
+//
+
+void rbm_init(message_ring_buffer *rbm, int size, size_t elemsize) {
+    rbm->size  = size + 1; /* include empty elem */
+    rbm->start = 0;
+    rbm->end   = 0;
+    rbm->elems = (void *)calloc(rbm->size, elemsize);
+}
+
+void rbm_free(message_ring_buffer *rbm) {
+    free(rbm->elems); /* OK if null */ }
+
+int rbm_is_full(message_ring_buffer *rbm) {
+    return (rbm->end + 1) % rbm->size == rbm->start; }
+
+int rbm_is_empty(message_ring_buffer *rbm) {
+    return rbm->end == rbm->start; }
+
+/* Write an element, overwriting oldest element if buffer is full. App can
+   choose to avoid the overwrite by checking rbmIsFull(). */
+void rbm_write(message_ring_buffer *rbm, fido_message *elem) {
+    rbm->elems[rbm->end] = *elem;
+    rbm->end = (rbm->end + 1) % rbm->size;
+    if (rbm->end == rbm->start)
+        rbm->start = (rbm->start + 1) % rbm->size; /* full, overwrite */
+}
+
+/* Read oldest element. App must ensure !rbmIsEmpty() first. */
+void rbm_read(message_ring_buffer *rbm, fido_message *elem) {
+    *elem = rbm->elems[rbm->start];
+    rbm->start = (rbm->start + 1) % rbm->size;
+}
+//--------------------------------------------------
+void rbr_init(response_ring_buffer *rbr, int size, size_t elemsize) {
+    rbr->size  = size + 1; /* include empty elem */
+    rbr->start = 0;
+    rbr->end   = 0;
+    rbr->elems = (void *)calloc(rbr->size, elemsize);
+}
+
+void rbr_free(response_ring_buffer *rbr) {
+    free(rbr->elems); /* OK if null */ }
+
+int rbr_is_full(response_ring_buffer *rbr) {
+    return (rbr->end + 1) % rbr->size == rbr->start; }
+
+int rbr_is_empty(response_ring_buffer *rbr) {
+    return rbr->end == rbr->start; }
+
+/* Write an element, overwriting oldest element if buffer is full. App can
+   choose to avoid the overwrite by checking rbrIsFull(). */
+void rbr_write(response_ring_buffer *rbr, fido_response *elem) {
+    rbr->elems[rbr->end] = *elem;
+    rbr->end = (rbr->end + 1) % rbr->size;
+    if (rbr->end == rbr->start)
+        rbr->start = (rbr->start + 1) % rbr->size; /* full, overwrite */
+}
+
+/* Read oldest element. App must ensure !rbrIsEmpty() first. */
+void rbr_read(response_ring_buffer *rbr, fido_response *elem) {
+    *elem = rbr->elems[rbr->start];
+    rbr->start = (rbr->start + 1) % rbr->size;
+}
+
+
+void server_init(int *hostSocket, struct sockaddr_in *hostAddr, uint32_t address, uint32_t port) {
 
   // Create the socket, with basic options.
   *hostSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -28,7 +168,7 @@ void hostSocketInitAndBind(int *hostSocket, struct sockaddr_in *hostAddr, int po
 
   // Basic socket settings
   hostAddr->sin_family = AF_INET;
-  hostAddr->sin_port = htons(port);
+  hostAddr->sin_port = port;
 
   // Clean that memory out. Not sure what's in there.
   memset(&(hostAddr->sin_zero), 0, 8);
@@ -42,83 +182,349 @@ void hostSocketInitAndBind(int *hostSocket, struct sockaddr_in *hostAddr, int po
 
 }
 
-struct message {
-  bit_array_num_t offset;
-  char val;
-};
+int sendall(int s, void *buf, int *len) {
+    int total = 0;        // how many bytes we've sent
+    int bytesleft = *len; // how many we have left to send
+    int n;
 
-struct SHArgs
-{
-    int *clientSocket;
-    bit_array_t *bits;
-};
+    while(total < *len) {
+        n = send(s, buf+total, bytesleft, 0);
+        if (n == -1) { break; }
+        total += n;
+        bytesleft -= n;
+    }
 
-void* socketHandler(struct SHArgs *shargs) {
-  int *clientSocket = shargs->clientSocket;
-  bit_array_t *bits = shargs->bits;
+    *len = total; // return number actually sent here
+
+    return n==-1?-1:0; // return -1 on failure, 0 on success
+}
+
+void *socket_handler(socket_args *args) {
+  int *client_socket = args->client_socket;
+  bit_array_t *bits = args->bits;
 
   int packetLen = 5;
-  int byteCount;
+  int byte_count;
 
-  struct message msg;
-  struct message rsp;
+  fido_message msg;
+  fido_response rsp;
+
+  int num_messages = 0;
+  int num_responses = 0;
+
+  // These two numbers should never really be different, though, I guess it's
+  // okay.
+  int max_messages = 240;
+  int max_responses = 1200;
+
+  message_ring_buffer message_queue;
+  response_ring_buffer response_queue;
+
+  rbm_init(&message_queue, max_messages, sizeof(fido_message));
+  rbr_init(&response_queue, max_responses, sizeof(fido_response));
+
 
   char read_char = 'r';
   char set_char = 's';
   char unset_char = 'u';
   char error_char = 'e';
 
+  fd_set master;    // master file descriptor list
+  fd_set read_fds;  // temp file descriptor list for select()
+  fd_set write_fds;  // temp file descriptor list for select()
 
-  while ((byteCount = recv(*clientSocket, &msg, 5, 0)) > 0) {
+  FD_ZERO(&master);
+  FD_ZERO(&read_fds);
+  FD_ZERO(&write_fds);
 
-    /* printf("got data\n"); */
+  FD_SET(*client_socket, &master); // I realize this seems silly...
+  read_fds = master;
+  write_fds = master;
+  int nfds = *client_socket + 1;
 
-    rsp.offset = msg.offset;
-    rsp.val = error_char;
+  // Description of process below.:
+  // Create new process built on select.
+  // * malloc and clear msg stack
+  // * malloc and clear response stack
+  // * select the socket.
+  // * recv when socket is ready.
+  //   * recv 5 bytes at a time until all bytes are sent
+  //   - or -
+  //   * until you've hit max messages per read limit
+  // * When done reading, dispatch all messages.
+  //   * Add responses to response stack
+  // * send until all responses are sent.
+  // * start process over.
+  // * Also, make sure we do all endian conversions here. Just to be safe.
 
-    if (msg.val == read_char) {
-      /* printf("read\n"); */
-      if(bit_array_test(bits, msg.offset)) {
-        rsp.val = set_char;
-      } else {
-        rsp.val = unset_char;
-      }
-    } else if (msg.val == set_char){
-      /* printf("set\n"); */
-      bit_array_set_true(bits, msg.offset);
-      rsp.val = set_char;
-    } else if (msg.val == unset_char) {
-      /* printf("unset\n"); */
-      bit_array_set_false(bits, msg.offset);
-      rsp.val = unset_char;
+
+  // Notes:
+  // select returns -1 on an error, 0 on none ready if the timeout expires, or
+  // the total number of fds that are ready.
+  int should_read = 0;
+  int should_dispatch = 0;
+  int should_write = 0;
+
+  int read_ready = 0;
+  int write_ready = 0;
+
+  // create an immediate timeout for inner selects.
+  struct timeval no_t:ime;
+  no_time.tv_sec = 0;
+  no_time.tv_usec = 0;
+
+  struct timeval short_time;
+  no_time.tv_sec = 1;
+  no_time.tv_usec = 0;
+
+  int msg_size = (int)sizeof(fido_message);
+  int rsp_size = (int)sizeof(fido_response);
+
+  int my_test;
+
+  // I set byte_count to -1 if I ever get 0 back from a recv.
+  while (byte_count >= 0) {
+
+    // Wait here until there's data to be read.
+    read_ready = select(nfds, &read_fds, NULL, NULL, NULL);
+    if (read_ready == -1) {
+      // major error with client. We'll likely need to close and free the
+      // socket.
+      byte_count = -1;
+      break;
+    } else if (read_ready == 0) {
+      // not ready to be read yet.
+      should_read = 0;
     } else {
-      /* printf("recieved malformed action.\n"); */
+      // We're ready to read some data.
+      should_read = 0;
+      if (!rbm_is_full(&message_queue)){
+        // Just make sure that the queue isn't full already.
+        should_read = 1;
+      }
+
+      while (should_read) {
+        // We're looping here so long as we should continue reading.
+        byte_count = recv(*client_socket, &msg, 5, 0);
+        if (byte_count < 5) {
+          // Hmm... t)is shouldn't happen.
+          // we're here because the client didn't send enough data. We should
+          // probably just ignore this data, and discard it. I'll ask my
+          // friends that are smarter than me what they think. AFAIK the socket
+          // wouldn't be ready for reading if there were partial packets on it.
+          // Though, I was wrong once... Hopefully someone out there can answer
+          // this. I'll think of things, and document possible options here.
+          //
+          // Option 1:
+          //   Queue a msg with the state of 'e' to denote an error, and return
+          //   an error back to the client for that one.
+          should_read = 0;
+          byte_count = 0;
+          continue;
+        } else {
+          // **Rubber meets the road for reading**
+          //
+          // first, we want to be endian safe, then queue the message. we only
+          // have to convert the offset as the state is a char (1 byte) and not
+          // affected by endieness.
+          // Network Byte Order to Host Long cast as proper type.
+          msg.offset = (bit_array_num_t)ntohl(msg.offset);
+          if (msg.offset > bits->num_bits) {
+            // Either the client has sent us the data in the wrong format, or
+            // they're asking for something out of bounds. Either way, we're
+            // not writing this msg.
+          } else {
+            // Append the message to the queue.
+            rbm_write(&message_queue, &msg);
+
+            if (rbm_is_full(&message_queue)) {
+              // We're now at our limit.
+              // Time to dispatch all messages, and queue up responses.
+              should_read = 0;
+              byte_count = 0;
+              continue;
+            }
+          }
+          read_fds = master;
+          read_ready = select(nfds, &read_fds, NULL, NULL, &no_time);
+          if (read_ready == -1) {
+            // some kind of socket error.
+            should_read = 0;
+            byte_count = -1;
+            continue;
+          } else if (read_ready == 0) {
+            // No more data to be read at this time. Let's move onto selection.
+            should_read = 0;
+            byte_count = 0;
+            continue;
+          }
+          // If we're here, there's data to be read.
+        }
+      }
+
+      if (byte_count == -1) {
+        // We've continued from the read loop, and the client connecton is dead
+        // or closed.
+        continue;
+      }
     }
 
-    send(*clientSocket, &rsp, packetLen, 0);
-  }
-  shutdown(*clientSocket, SHUT_WR);
-  close(*clientSocket);
+    // At this point, we've got some queued up messages. Let's loop through
+    // them, dispatch each one, and add the result to the response queue.
+    should_dispatch = 0;
+    if (!rbr_is_full(&response_queue)) {
+      // The queue is full, we need to go down and send some messages. If we
+      // can't do that, we'll loop back around again until we can.
+      should_dispatch = 1;
+    }
 
-  free(clientSocket);
+    while (should_dispatch) {
+      // Grab the 
+      if (rbm_is_empty(&message_queue)) {
+        should_dispatch = 0;
+        continue;
+      }
+      fido_message tmp_msg;
+      rbm_read(&message_queue, &tmp_msg);
+
+      rsp.state = error_char;
+
+      switch (tmp_msg.state) {
+        case 'r':
+        case 'R':
+          if(bit_array_test(bits, tmp_msg.offset)) {
+            rsp.state = set_char;
+          } else {
+            rsp.state = unset_char;
+          }
+          break;
+        case 's':
+        case 'S':
+          bit_array_set_true(bits, tmp_msg.offset);
+          if(bit_array_test(bits, tmp_msg.offset)) {
+            rsp.state = set_char;
+          } else {
+            rsp.state = error_char;
+          }
+          break;
+        case 'u':
+        case 'U':
+          bit_array_set_false(bits, tmp_msg.offset);
+          if(bit_array_test(bits, tmp_msg.offset)) {
+            rsp.state = error_char;
+          } else {
+            rsp.state = unset_char;
+          }
+          break;
+        default:
+          break;
+      }
+
+
+      rbr_write(&response_queue, &rsp);
+
+      if (rbr_is_full(&response_queue)) {
+        // We've managed to fill up the response queue. This is very odd, but
+        // possible. We need to break out of the for loop. and stop reading in
+        // messages.
+        should_dispatch = 0;
+        continue;
+      }
+    }
+
+    // Now it's time to try to write all of the responses back to the client
+    // that we've queued up.
+    should_write = 1;
+    my_test = rbr_is_empty(&response_queue);
+    if (rbr_is_empty(&response_queue)) {
+      // We don't have anything to send right now.
+      should_write = 0;
+    }
+    write_fds = master;
+    write_ready = select(nfds, NULL, &write_fds, NULL, &no_time);
+    if (write_ready == -1) {
+      // some kind of socket error.
+      should_write = 0;
+      byte_count = -1;
+      continue;
+    } else if (write_ready == 0) {
+      // Not ready to write right now. We'll just have to come back around. And
+      // try again in a minute.
+    } else {
+      while (should_write) {
+        fido_response tmp_rsp;
+
+        if (rbr_is_empty(&response_queue)) {
+          // We don't have anything to send right now.
+          should_write = 0;
+          continue;
+        }
+        rbr_read(&response_queue, &tmp_rsp);
+
+        // Send the byte
+        byte_count = send(*client_socket, &tmp_rsp, 1, 0);
+
+        if (byte_count < 1) {
+          // There was an error here... We're going to have to figure out if
+          // it's worth handling or not. For now, we're just going to forget
+          // about that byte, and hope it actually made it there.
+        }
+
+        // Quickly check to see if the socket is ready for more writes.
+        write_fds = master;
+        write_ready = select(nfds, NULL, &write_fds, NULL, &no_time);
+        if (write_ready == -1) {
+          // some kind of socket error.
+          should_write = 0;
+          byte_count = -1;
+          continue;
+        } else if (write_ready == 0) {
+          should_write = 0;
+          byte_count = 0;
+          continue;
+        }
+      }
+    }
+
+    byte_count = 0;
+    should_read = 0;
+    should_dispatch = 0;
+    should_write = 0;
+  }
+
+  shutdown(*client_socket, SHUT_WR);
+  close(*client_socket);
+  free(client_socket);
+  rbm_free(&message_queue);
+  rbr_free(&response_queue);
   printf("Lost a connection.\n");
   return NULL;
 }
 
-int main(int argc, char *argv[]) {
-  // enums
-  int port = 8030;
 
-  // 2^32 - 1
-  bit_array_num_t NUM_BITS = 4294967295;
+int main(int argc, char *argv[]) {
+  fido_args args;
+
+  args.port = htons(8030);
+  args.origport = "8030";
+  args.address = INADDR_ANY;
+  args.origaddress = "127.0.0.1";
+  args.size = 512;
+
+  get_args(&args, argc, argv);
+  welcome_msg();
+  version_msg();
+
+  fprintf(stderr, "Port: %s\nBinding Address: %s\nBitmap Size: %u\n",
+      args.origport, args.origaddress, args.size);
 
   bit_array_t bits;
   bit_array_init(&bits);
-  bit_array_set_num_bits(&bits, NUM_BITS);
+  bit_array_set_num_bits(&bits, args.size);
   bit_array_set_all_false(&bits);
 
   int hostSocket;
-  int *clientSocket;
+  int *client_socket;
 
   socklen_t addrSize;
 
@@ -129,32 +535,32 @@ int main(int argc, char *argv[]) {
 
   addrSize = sizeof(struct sockaddr_in);
 
-  hostSocketInitAndBind(&hostSocket, &myAddr, port);
+  server_init(&hostSocket, &myAddr, args.address, args.port);
 
   printf("Awaiting connections.\n");
 
   sigset(SIGPIPE, SIG_IGN);
 
-  while (1)
-  {
-    clientSocket = (int*)malloc(sizeof(int));
+  while (1) {
+    client_socket = (int*)malloc(sizeof(int));
 
-    if ((*clientSocket = accept(hostSocket, (struct sockaddr*)&sourceAddr, &addrSize)) != -1 )
+    if ((*client_socket = accept(hostSocket, (struct sockaddr*)&sourceAddr, &addrSize)) != -1 )
     {
       printf("Client connection established.\n");
-      struct SHArgs shargs;
-      shargs.clientSocket = clientSocket;
-      shargs.bits = &bits;
+      socket_args sargs;
+      sargs.client_socket = client_socket;
+      sargs.bits = &bits;
 
-      pthread_create(&thread_id, 0, (void *)&socketHandler, &shargs);
+      pthread_create(&thread_id, 0, (void *)&socket_handler, &sargs);
       pthread_detach(thread_id);
 
 
     } else {
-      fprintf(stderr, "Error accepting %d\n", errno);
+      fprintf(stderr, "Error accepting connection.\n");
     }
   }
 
-  return 0;
+
+  return 1;
 
 }

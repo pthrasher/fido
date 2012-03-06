@@ -1,3 +1,4 @@
+CFLAGS=-Wall -g -ggdb
 OBJS = fido.o bit-array.o
 
 fido: $(OBJS)
