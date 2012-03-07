@@ -33,7 +33,6 @@ PORT	selectserver.c	/^#define PORT /;"	d	file:
 __STDC_LIMIT_MACROS	bit-array.c	/^#define __STDC_LIMIT_MACROS$/;"	d	file:
 __dbg_h__	dbg.h	/^#define __dbg_h__$/;"	d
 __fidonetworking_h	network.h	/^#define __fidonetworking_h$/;"	d
-__fidonetworking_h	networking.h	/^#define __fidonetworking_h$/;"	d
 __init__	fido.py	/^    def __init__(self):$/;"	m
 __init__	fido.py	/^    def __init__(self, api_host='0.0.0.0', api_port=8030):$/;"	m
 _args_h	args.h	/^#define _args_h$/;"	d
@@ -41,35 +40,30 @@ _bit_array_h	bit-array.h	/^#define _bit_array_h$/;"	d
 _bitmap_h	bitmap.h	/^#define _bitmap_h$/;"	d
 _fido_h	fido.h	/^#define _fido_h$/;"	d
 _fido_h	fido2.h	/^#define _fido_h$/;"	d
+_networking_h	networking.h	/^#define _networking_h$/;"	d
 _protocol_h	protocol.h	/^#define _protocol_h$/;"	d
 _protocol_h	server.h	/^#define _protocol_h$/;"	d
 _readDataFromClient	network.c	/^int _readDataFromClient(fidoClient* c) {$/;"	f
-_readDataFromClient	networking.c	/^int _readDataFromClient(fidoClient* c) {$/;"	f
 _storage_h	storage.h	/^#define _storage_h$/;"	d
 _util_h	util.h	/^#define _util_h$/;"	d
+addr	networking.h	/^  struct sockaddr_in addr;$/;"	m	typeref:struct:fidoClient::sockaddr_in
+addr	networking.h	/^  struct sockaddr_in addr;$/;"	m	typeref:struct:fidoServer::sockaddr_in
 address	args.h	/^  uint32_t address;$/;"	m
 address	fido2.c	/^  uint32_t address;$/;"	m	file:
+allocateSlotsFor	bitmap.c	/^static inline bitmapnum_t *allocateSlotsFor(bitmap_t *array) {$/;"	f	file:
 allocate_slots_for	bit-array.c	/^static inline bit_array_slot_t *allocate_slots_for(bit_array_t *array) {$/;"	f	file:
-allocate_slots_for	bitmap.c	/^static inline bitmapnum_t *allocate_slots_for(bitmap_t *array) {$/;"	f	file:
 ascii_logo	logo.h	/^char *ascii_logo = $/;"	v
-bitArrayNumBits	bitmap.h	/^static inline bitmapnum_t bitArrayNumBits(const bitmap_t *array) {$/;"	f
+bitMaskFor	bitmap.c	/^static inline bitmapnum_t bitMaskFor(const bitmapnum_t nthBit) {$/;"	f	file:
 bit_array_destroy	bit-array.c	/^void bit_array_destroy(bit_array_t *array) {$/;"	f
-bit_array_destroy	bitmap.c	/^void bit_array_destroy(bitmap_t *array) {$/;"	f
 bit_array_idx_t	bit-array.h	/^typedef uintmax_t bit_array_idx_t;$/;"	t
 bit_array_init	bit-array.c	/^void bit_array_init(bit_array_t *array) {$/;"	f
-bit_array_init	bitmap.c	/^void bit_array_init(bitmap_t *array) {$/;"	f
 bit_array_num_bits	bit-array.h	/^static inline bit_array_num_t bit_array_num_bits(const bit_array_t *array) {$/;"	f
 bit_array_num_t	bit-array.h	/^typedef uintmax_t bit_array_num_t;$/;"	t
 bit_array_set_all_false	bit-array.c	/^void bit_array_set_all_false(bit_array_t *array) {$/;"	f
-bit_array_set_all_false	bitmap.c	/^void bit_array_set_all_false(bitmap_t *array) {$/;"	f
 bit_array_set_all_true	bit-array.c	/^void bit_array_set_all_true(bit_array_t *array) {$/;"	f
-bit_array_set_all_true	bitmap.c	/^void bit_array_set_all_true(bitmap_t *array) {$/;"	f
 bit_array_set_false	bit-array.c	/^void bit_array_set_false(bit_array_t *array, const bit_array_idx_t nth_bit) {$/;"	f
-bit_array_set_false	bitmap.c	/^void bit_array_set_false(bitmap_t *array, const bitmapnum_t nth_bit) {$/;"	f
 bit_array_set_num_bits	bit-array.c	/^bool bit_array_set_num_bits(bit_array_t *array, const bit_array_num_t num_bits)$/;"	f
-bit_array_set_num_bits	bitmap.c	/^bool bit_array_set_num_bits(bitmap_t *array, const bitmapnum_t num_bits)$/;"	f
 bit_array_set_true	bit-array.c	/^void bit_array_set_true(bit_array_t *array, const bit_array_idx_t nth_bit) {$/;"	f
-bit_array_set_true	bitmap.c	/^void bit_array_set_true(bitmap_t *array, const bitmapnum_t nth_bit) {$/;"	f
 bit_array_slot_t	bit-array.h	/^typedef uintmax_t bit_array_slot_t;$/;"	t
 bit_array_t	bit-array.h	/^typedef struct bit_array_t {$/;"	s
 bit_array_t	bit-array.h	/^} bit_array_t;$/;"	t	typeref:struct:bit_array_t
@@ -77,14 +71,21 @@ bit_array_test	bit-array.c	/^bool bit_array_test(const bit_array_t *array, const
 bit_array_toggle	bit-array.c	/^void bit_array_toggle(bit_array_t *array, const bit_array_idx_t nth_bit) {$/;"	f
 bit_array_toggle_all	bit-array.c	/^void bit_array_toggle_all(bit_array_t *array) {$/;"	f
 bit_mask_for	bit-array.c	/^static inline bit_array_slot_t bit_mask_for(const bit_array_idx_t nth_bit) {$/;"	f	file:
-bit_mask_for	bitmap.c	/^static inline bitmapnum_t bit_mask_for(const bit_array_idx_t nth_bit) {$/;"	f	file:
+bitmapDestroy	bitmap.c	/^void bitmapDestroy(bitmap_t *array) {$/;"	f
+bitmapInit	bitmap.c	/^void bitmapInit(bitmap_t *array) {$/;"	f
+bitmapSetAllFalse	bitmap.c	/^void bitmapSetAllFalse(bitmap_t *array) {$/;"	f
+bitmapSetAllTrue	bitmap.c	/^void bitmapSetAllTrue(bitmap_t *array) {$/;"	f
+bitmapSetFalse	bitmap.c	/^void bitmapSetFalse(bitmap_t *array, const bitmapnum_t nthBit) {$/;"	f
+bitmapSetNumBits	bitmap.c	/^bool bitmapSetNumBits(bitmap_t *array, const bitmapnum_t numBits) {$/;"	f
+bitmapSetTrue	bitmap.c	/^void bitmapSetTrue(bitmap_t *array, const bitmapnum_t nthBit) {$/;"	f
+bitmapTest	bitmap.c	/^bool bitmapTest(const bitmap_t *array, const bitmapnum_t nthBit) {$/;"	f
+bitmapToggle	bitmap.c	/^void bitmapToggle(bitmap_t *array, const bitmapnum_t nthBit) {$/;"	f
+bitmapToggleAll	bitmap.c	/^void bitmapToggleAll(bitmap_t *array) {$/;"	f
 bitmap_t	bitmap.h	/^typedef struct bitmap_t {$/;"	s
 bitmap_t	bitmap.h	/^} bitmap_t;$/;"	t	typeref:struct:bitmap_t
-bitmap_test	bitmap.c	/^bool bitmap_test(const bitmap_t *array, const bitmapnum_t nth_bit) {$/;"	f
-bitmap_toggle	bitmap.c	/^void bitmap_toggle(bitmap_t *array, const bitmapnum_t nth_bit) {$/;"	f
-bitmap_toggle_all	bitmap.c	/^void bitmap_toggle_all(bitmap_t *array) {$/;"	f
 bitmapnum_t	bitmap.h	/^typedef uintmax_t bitmapnum_t;$/;"	t
 bits	fido.h	/^    bit_array_t *bits;$/;"	m
+bits	networking.h	/^  bitmap_t* bits;$/;"	m
 bits	protocol.h	/^  bit_array_t *bits;$/;"	m
 byte_count	fido.py	/^    byte_count = 0 # reset our byte count to 0$/;"	v
 byte_count	fido.py	/^    byte_count = 0$/;"	v
@@ -96,18 +97,19 @@ check_debug	dbg.h	/^#define check_debug(/;"	d
 check_mem	dbg.h	/^#define check_mem(/;"	d
 clean_errno	dbg.h	/^#define clean_errno(/;"	d
 client_socket	fido.h	/^    int *client_socket;$/;"	m
+createServer	networking.c	/^fidoServer createServer(uint32_t nboAddress, uint32_t nboPort, bitmap_t* bits) {$/;"	f
 createSingleFDSet	network.c	/^fd_set createSingleFDSet(int* fd) {$/;"	f
-createSingleFDSet	networking.c	/^fd_set createSingleFDSet(int* fd) {$/;"	f
 debug	dbg.h	/^#define debug(/;"	d
 destroy_socket	protocol.c	/^void destroy_socket(int *socket) {$/;"	f
 fd	network.h	/^  int* fd;$/;"	m
-fd	networking.h	/^  int* fd;$/;"	m
+fd	networking.h	/^  int fd;$/;"	m
 fidoClient	network.h	/^typedef struct fidoClient {$/;"	s
 fidoClient	network.h	/^} fidoClient;$/;"	t	typeref:struct:fidoClient
 fidoClient	networking.h	/^typedef struct fidoClient {$/;"	s
 fidoClient	networking.h	/^} fidoClient;$/;"	t	typeref:struct:fidoClient
 fidoClientEventLoop	network.c	/^void* fidoClientEventLoop(fidoClient* c) {$/;"	f
-fidoClientEventLoop	networking.c	/^void* fidoClientEventLoop(fidoClient* c) {$/;"	f
+fidoServer	networking.h	/^typedef struct fidoServer {$/;"	s
+fidoServer	networking.h	/^} fidoServer;$/;"	t	typeref:struct:fidoServer
 fido_args	args.h	/^typedef struct fido_args {$/;"	s
 fido_args	args.h	/^} fido_args;$/;"	t	typeref:struct:fido_args
 fido_args	fido2.c	/^typedef struct fido_args {$/;"	s	file:
@@ -118,8 +120,6 @@ fido_message_t	protocol.h	/^typedef struct fido_message_t {$/;"	s
 fido_message_t	protocol.h	/^} fido_message_t;$/;"	t	typeref:struct:fido_message_t
 fido_response	fido.h	/^typedef struct fido_response {$/;"	s
 fido_response	fido.h	/^} fido_response;$/;"	t	typeref:struct:fido_response
-fido_server	fido.h	/^typedef struct fido_server {$/;"	s
-fido_server	fido.h	/^} fido_server;$/;"	t	typeref:struct:fido_server
 fido_socket_handler	protocol.c	/^void fido_socket_handler(socket_and_bits_t sab) {$/;"	f
 format_redis_msg	redis.py	/^def format_redis_msg(msg):$/;"	f
 get	fido.py	/^    def get(self, offset):$/;"	m
@@ -129,11 +129,10 @@ get_in_addr	selectserver.c	/^void *get_in_addr(struct sockaddr *sa)$/;"	f
 has_ip	fido.py	/^    def has_ip(self, ipaddr):$/;"	m
 host	fido.py	/^    host = '0.0.0.0'$/;"	v
 host	redis.py	/^    host = 'localhost'$/;"	v
+initialBit	bitmap.c	/^static inline bitmapnum_t initialBit(void) {$/;"	f	file:
 initial_bit	bit-array.c	/^static inline bit_array_slot_t initial_bit(void) {$/;"	f	file:
-initial_bit	bitmap.c	/^static inline bitmapnum_t initial_bit(void) {$/;"	f	file:
 ip2long	fido.py	/^    def ip2long(ip):$/;"	m
 isFDReady	network.c	/^int isFDReady(int* fd, char rw) {$/;"	f
-isFDReady	networking.c	/^int isFDReady(int* fd, char rw) {$/;"	f
 log_err	dbg.h	/^#define log_err(/;"	d
 log_info	dbg.h	/^#define log_info(/;"	d
 log_warn	dbg.h	/^#define log_warn(/;"	d
@@ -141,22 +140,24 @@ main	fido.c	/^int main(int argc, char *argv[]) {$/;"	f
 main	fido2.c	/^int main(int argc, char *argv[])$/;"	f
 main	selectserver.c	/^int main(void)$/;"	f
 mark_ip	fido.py	/^    def mark_ip(self, ipaddr, val):$/;"	m
+maxClients	networking.h	/^  int maxClients;$/;"	m
+memset64	bitmap.c	/^void memset64(void * dest, uint64_t value, uintptr_t size) {$/;"	f
 min	bit-array.c	/^static inline bit_array_num_t min(const bit_array_num_t a,$/;"	f	file:
-min	bitmap.c	/^static inline bitmapnum_t min(const bit_array_num_t a,$/;"	f	file:
-nbo_address	fido.h	/^  uint32_t nbo_address;$/;"	m
-nbo_port	fido.h	/^  uint32_t nbo_port;$/;"	m
+min	bitmap.c	/^static inline bitmapnum_t min(const bitmapnum_t a, const bitmapnum_t b) {$/;"	f	file:
+numBits	bitmap.h	/^  bitmapnum_t numBits;$/;"	m
+numClients	networking.h	/^  int numClients;$/;"	m
+numRequests	networking.h	/^  long numRequests;$/;"	m
+numSlots	bitmap.h	/^  bitmapnum_t numSlots;$/;"	m
+numSlotsFor	bitmap.c	/^static inline bitmapnum_t numSlotsFor(const bitmapnum_t numBits) {$/;"	f	file:
 num_bits	bit-array.h	/^  bit_array_num_t num_bits;$/;"	m
-num_bits	bitmap.h	/^  bitmapnum_t num_bits;$/;"	m
 num_slots	bit-array.h	/^  bit_array_num_t num_slots;$/;"	m
-num_slots	bitmap.h	/^  bitmapnum_t num_slots;$/;"	m
 num_slots_for	bit-array.c	/^static inline bit_array_num_t num_slots_for(const bit_array_num_t num_bits) {$/;"	f	file:
-num_slots_for	bitmap.c	/^static inline bitmapnum_t num_slots_for(const bit_array_num_t num_bits) {$/;"	f	file:
 offset	fido.h	/^  bit_array_num_t offset;$/;"	m
 offset	protocol.h	/^  bit_array_num_t offset;$/;"	m
+ohNoes	util.h	/^#define ohNoes(/;"	d
+ohNoesMsg	util.h	/^#define ohNoesMsg(/;"	d
 oh_noes	fido2.c	/^#define oh_noes(/;"	d	file:
-oh_noes	util.h	/^#define oh_noes(/;"	d
 oh_noes_msg	fido2.c	/^void oh_noes_msg()$/;"	f
-oh_noes_msg	util.h	/^#define oh_noes_msg(/;"	d
 ohnoes	ohnoes.h	/^char *ohnoes = $/;"	v
 ohnoes	util.h	/^char *ohnoes = $/;"	v
 origaddress	args.h	/^  char* origaddress;$/;"	m
@@ -167,20 +168,23 @@ port	args.h	/^  uint32_t port;$/;"	m
 port	fido.py	/^    port = 8030$/;"	v
 port	fido2.c	/^  uint32_t port;$/;"	m	file:
 port	redis.py	/^    port = 6379$/;"	v
+printMsg	util.h	/^void printMsg(const char *msg, ...) {$/;"	f
 print_msg	fido2.c	/^void print_msg(const char *msg, ...) {$/;"	f
-print_msg	util.h	/^void print_msg(const char *msg, ...) {$/;"	f
+runServer	networking.c	/^int runServer(fidoServer* _server) {$/;"	f
 runs	fido.py	/^    runs = 0 # We're going to count how many queries we sent to the api.$/;"	v
 runs	redis.py	/^    runs = 0 # We're going to count how many queries we sent to the api.$/;"	v
 s	fido.py	/^    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)$/;"	v
 s	redis.py	/^    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)$/;"	v
-sendall	fido.c	/^int sendall(int s, void *buf, int *len) {$/;"	f
+sendall	networking.c	/^int sendall(int s, void *buf, int *len) {$/;"	f
 sentinel	dbg.h	/^#define sentinel(/;"	d
-server_init	fido.c	/^void server_init(int *hostSocket, struct sockaddr_in *hostAddr, uint32_t address, uint32_t port) {$/;"	f
+server	fido.c	/^fidoServer server;$/;"	v
 set	fido.py	/^    def set(self, offset, value):$/;"	m
+setDefaultArgs	fido.c	/^void setDefaultArgs(fido_args* args) {$/;"	f
+setupBitmap	fido.c	/^void setupBitmap(bitmap_t* bits, bitmapnum_t size) {$/;"	f
 size	args.h	/^  bit_array_num_t size;$/;"	m
 size	fido2.c	/^  bit_array_num_t size;$/;"	m	file:
+slotFor	bitmap.c	/^static inline bitmapnum_t slotFor(const bitmapnum_t nthBit) {$/;"	f	file:
 slot_for	bit-array.c	/^static inline bit_array_idx_t slot_for(const bit_array_idx_t nth_bit) {$/;"	f	file:
-slot_for	bitmap.c	/^static inline bitmapnum_t slot_for(const bit_array_idx_t nth_bit) {$/;"	f	file:
 slots	bit-array.h	/^  bit_array_slot_t *slots;$/;"	m
 slots	bitmap.h	/^  bitmapnum_t *slots;$/;"	m
 socket	protocol.h	/^  int *socket;$/;"	m
@@ -199,12 +203,12 @@ str_buffer	redis.py	/^    str_buffer = "" # Empty out the buffer.$/;"	v
 str_buffer	redis.py	/^    str_buffer = "" # empty buffer for what will be sent to the server.$/;"	v
 usage	usage.h	/^char *usage = "fido [-a ipaddress] [-p port] [-s bitmapsize]\\n";$/;"	v
 usage	util.h	/^char *usage = $/;"	v
-usage_exit	util.h	/^#define usage_exit(/;"	d
+usageExit	util.h	/^#define usageExit(/;"	d
+usageMsg	util.h	/^#define usageMsg(/;"	d
 usage_msg	fido2.c	/^void usage_msg()$/;"	f
-usage_msg	util.h	/^#define usage_msg(/;"	d
+versionMsg	util.h	/^#define versionMsg(/;"	d
 version_msg	fido2.c	/^void version_msg()$/;"	f
-version_msg	util.h	/^#define version_msg(/;"	d
 versionmsg	util.h	/^char *versionmsg =$/;"	v
 welcome	util.h	/^char *welcome = $/;"	v
+welcomeMsg	util.h	/^#define welcomeMsg(/;"	d
 welcome_msg	fido2.c	/^void welcome_msg()$/;"	f
-welcome_msg	util.h	/^#define welcome_msg(/;"	d

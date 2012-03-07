@@ -3,11 +3,11 @@
     Distributed under the MIT License (see accompanying file LICENSE
     or a copy at http://www.opensource.org/licenses/MIT
 */
-#include "args.h"
+#include "fido.h"
 
 void get_args(fido_args* arg_out, int argc, char* argv[]) {
   int c;
-  struct in_addr host_addr;
+  struct in_addr hostAddr;
   int port = 0;
   long size = 0;
 
@@ -20,18 +20,18 @@ void get_args(fido_args* arg_out, int argc, char* argv[]) {
       case 'a':
         /* Address */
 
-        if (inet_aton(optarg, &host_addr) != 0)
+        if (inet_aton(optarg, &hostAddr) != 0)
         {
-          arg_out->address = host_addr.s_addr;
+          arg_out->address = hostAddr.s_addr;
         }
         else
         {
-          oh_noes("I couldn't quite parse that IPAddr, Jim. (%s)", optarg);
+          ohNoes("I couldn't quite parse that IPAddr, Jim. (%s)", optarg);
         }
 
         /* No error, proceed */
         arg_out->origaddress = strdup(optarg);
-        arg_out->address = host_addr.s_addr;
+        arg_out->address = hostAddr.s_addr;
         break;
       case 'p':
         /* Port */
@@ -46,12 +46,12 @@ void get_args(fido_args* arg_out, int argc, char* argv[]) {
         /* Size */
         size = atol(optarg);
 
-        if (size > MAX || size < MIN) {
-          oh_noes("You must specify *at least* a size of 1, and no more than %u\n", MAX);
+        if (size > UINTMAX_MAX || size < MIN) {
+          ohNoes("You must specify *at least* a size of 1, and no more than %u\n", (unsigned)UINTMAX_MAX);
         }
 
         /* No error, proceed */
-        arg_out->size = (bit_array_num_t)size;
+        arg_out->size = (bitmapnum_t)size;
         break;
       case '?':
         if (optopt == 'c' || optopt == 'a' || optopt == 's')

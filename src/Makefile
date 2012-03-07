@@ -1,5 +1,5 @@
 CFLAGS=-Wall -g -ggdb
-OBJS = fido.o bit-array.o
+OBJS = networking.o args.o bitmap.o fido.o
 
 fido: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^

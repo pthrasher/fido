@@ -62,7 +62,7 @@ class IPMap(object):
     def has_ip(self, ipaddr):
         ipl = self.ip2long(ipaddr)
         return self.b.get(ipl)
-    
+
     def mark_ip(self, ipaddr, val):
         ipl = self.ip2long(ipaddr)
         self.b.set(ipl, val)
@@ -79,6 +79,7 @@ if __name__ == "__main__":
 
     host = '0.0.0.0'
     port = 8030
+    import pdb; pdb.set_trace() ### XXX BREAKPOINT
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port,))
 

@@ -1,6 +1,6 @@
+#ifndef _asciiart_h
+#define _asciiart_h
 
-#ifndef _util_h
-#define _util_h
 // Messages
 // ========
 //
@@ -18,18 +18,6 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
-
-// ### print_msg
-//
-// This is a generic printing function we'll use for printing anything out to
-// the console. This way we only have one place to change the fd we're printing
-// to.
-void print_msg(const char *msg, ...) {
-  va_list a_list;
-  va_start(a_list, msg);
-  vfprintf(stderr, msg, a_list);
-  va_end(a_list);
-}
 
 // ### ohnoes
 //
@@ -82,56 +70,5 @@ char *versionmsg =
   "\n\n"
   ANSI_COLOR_RESET;
 
-// Macros
-// ======
-//
-// Macro purpose varies greatly, but as all macros, the below generally just
-// make my coding life easier.
-
-
-// Message Printers
-// ----------------
-//
-// These are the macros used to easily print the messages from the above
-// section.
-
-// ### usage_msg
-//
-// Call this 'method' in your code, and the usage statement will be printed
-// using print_msg.
-#define usageMsg() printMsg(usage);
-
-// ### oh_noes_msg
-//
-// Call this 'method' in your code, and the ohnoes ascii art will be printed
-// using print_msg.
-#define ohNoesMsg() printMsg(ohnoes);
-
-// ### welcome_msg
-//
-// Call this 'method' in your code, and the logo ascii art will be printed
-// using print_msg.
-#define welcomeMsg() printMsg(welcome);
-
-// ### version_msg
-//
-// Call this 'method' in your code, and the version statement will be printed
-// using print_msg.
-#define versionMsg() printMsg(versionmsg);
-
-
-// Error Handling
-// --------------
-//
-// These are the error handling macros.
-
-// ### oh_noes
-//
-// This is a catastrophic failure message. Basically anytime the app hits
-// a fatal error, it calls this with a message, and it in turn prints out
-// ohnoes from above, prints the passed in message, prints a usage statement,
-// and then exits with code 1.
-#define usageExit() { usageMsg(); exit(1); }
-#define ohNoes(M, ...) { ohNoesMsg(); printMsg(M, ##__VA_ARGS__); usageExit(); }
 
 #endif
