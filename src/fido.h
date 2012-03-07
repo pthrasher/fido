@@ -34,7 +34,7 @@
 
 // Threading / Async
 #include <pthread.h>
-/* #include <ev.h> */
+#include <ev.h>
 
 // App specific
 #include "version.h"
@@ -105,6 +105,7 @@ typedef struct fido_args {
   char* origaddress;
   bitmapnum_t size;
 } fido_args;
+void setDefaultArgs(fido_args* args);
 void get_args(fido_args* arg_out, int argc, char* argv[]);
 
 // Some logging macros
@@ -119,4 +120,5 @@ void get_args(fido_args* arg_out, int argc, char* argv[]);
 
 
 // End of `#ifndef _fido_h`
+
 #endif

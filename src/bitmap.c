@@ -1,5 +1,12 @@
 #include "fido.h"
 
+bitmap_t* newBitmap(bitmapnum_t size) {
+  bitmap_t* bits;
+  bitmapInit(bits);
+  bitmapSetNumBits(bits, size);
+  bitmapSetAllFalse(bits);
+  return bits;
+}
 void bitmapInit(bitmap_t *array) {
   array->numBits = 0;
   array->numSlots = 0;

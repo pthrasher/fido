@@ -5,6 +5,13 @@
 */
 #include "fido.h"
 
+void setDefaultArgs(fido_args* args) {
+  args->port = htons(8030);
+  args->origport = "8030";
+  args->address = INADDR_ANY;
+  args->origaddress = "127.0.0.1";
+  args->size = 512;
+}
 void get_args(fido_args* arg_out, int argc, char* argv[]) {
   int c;
   struct in_addr hostAddr;

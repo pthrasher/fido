@@ -11,20 +11,13 @@ fidoServer server;
 
 /* End Globals */
 
+/* Other Source Files */
 
-void setDefaultArgs(fido_args* args) {
-  args->port = htons(8030);
-  args->origport = "8030";
-  args->address = INADDR_ANY;
-  args->origaddress = "127.0.0.1";
-  args->size = 512;
-}
+#include "networking.c"
+#include "bitmap.c"
+#include "args.c"
 
-void setupBitmap(bitmap_t* bits, bitmapnum_t size) {
-  bitmapInit(bits);
-  bitmapSetNumBits(bits, size);
-  bitmapSetAllFalse(bits);
-}
+/* End Other Source Files */
 
 int main(int argc, char *argv[]) {
   /* Settings */
@@ -36,16 +29,15 @@ int main(int argc, char *argv[]) {
   welcomeMsg();
   versionMsg();
   printMsg("Port: %s\nBinding Address: %s\nBitmap Size: %u\n",
-      args.origport, args.origaddress, args.size);
+      args.origport, args.origaddress, (unsigned)args.size);
 
   /* Create the bitmap */
-  bitmap_t bits;
-  setupBitmap(&bits, args.size);
+  bitmap_t* bits = newBitmap(args.size);
 
   return 0;
 
   /* Establish the global server object */
-  server = createServer(args.address, args.port, &bits);
+  server = createServer(args.address, args.port, bits);
   runServer(&server);
 
   int *client_socket;
