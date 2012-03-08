@@ -79,7 +79,6 @@ if __name__ == "__main__":
 
     host = '0.0.0.0'
     port = 8030
-    import pdb; pdb.set_trace() ### XXX BREAKPOINT
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port,))
 
@@ -99,7 +98,7 @@ if __name__ == "__main__":
     byte_count = 0 # reset our byte count to 0
     s.recv(1500)
 
-    print "Made %d individual calls to the server" % runs
+    print 'Made %d individual calls to the server' % runs
 
 
     s.close()

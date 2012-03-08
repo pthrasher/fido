@@ -92,10 +92,6 @@ typedef struct fidoClient {
 fidoServer createServer(uint32_t nboAddress, uint32_t nboPort, bitmap_t* bits);
 int runServer(fidoServer* _server);
 void initAddr(struct sockaddr_in* addr, uint32_t nboAddress, uint32_t nboPort);
-int socketSetNonBlock(int fd);
-int socketSetTcpKeepAlive(int fd);
-int socketSetTcpNoDelay(int fd);
-int newAsyncSocket();
 
 // Settings related stuff.
 typedef struct fido_args {
