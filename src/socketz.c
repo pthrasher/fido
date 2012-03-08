@@ -9,8 +9,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "util/macros.h"
-#include "socketz.h"
+#include "fido/socketz.h"
 
 int socketSetNonBlock ( int fd )
 {
@@ -141,8 +140,16 @@ int serverAlloc ( int port, char * ipAddr )
     return SOCKETZ_EE;
   }
 
-  sa = sockaddrAlloc( ipAddr, port );
+  // Standard stuff.
+  socketSetReuseAddr( fd );
+  socketSetKeepAlive( fd );
 
+  // ASYNC!!
+  socketSetNonBlock( fd );
+  socketSetNoDelay( fd );
+
+  // Bind and listen
+  sa = sockaddrAlloc( ipAddr, port );
   serverListen( fd, ( struct sockaddr * )&sa, (socklen_t)sizeof( sa ) );
 
   return fd;
