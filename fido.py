@@ -68,32 +68,81 @@ class IPMap(object):
         self.b.set(ipl, val)
 
 
-# Testing purposes
-# for simple timing test:
-#     `time python fido.py`
+# Benchmark for the fido protocol.
+#
+# Sends batches of 'set' queries and measures throughput.
+# Each batch is 240 queries x 5 bytes = 1200 bytes.
 if __name__ == "__main__":
-    runs = 0 # We're going to count how many queries we sent to the api.
+    import time
+    import statistics
 
-    str_buffer = "" # empty buffer for what will be sent to the server.
+    QUERIES_PER_BATCH = 240
+    QUERY_SIZE = 5  # struct size: 4 byte uint + 1 byte char
+    RESPONSE_SIZE = QUERIES_PER_BATCH * QUERY_SIZE
+    BATCHES = 1250
+    WARMUP_BATCHES = 50
+    NUM_RUNS = 5
 
     host = '0.0.0.0'
     port = 8030
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, port,))
 
-    for a in range(1, 1251): # send 1250 packets.
+    def recv_exact(sock, nbytes):
+        """Read exactly nbytes from sock, looping until complete."""
+        data = b""
+        while len(data) < nbytes:
+            chunk = sock.recv(nbytes - len(data))
+            if not chunk:
+                raise ConnectionError("connection closed mid-read")
+            data += chunk
+        return data
 
-        # create 240 queries, each at 5 bytes, this makes 1200 bytes. This way,
-        # it all gets sent in a single packet.
-        for b in range(1, 241):
-            runs += 1
-            str_buffer += struct.pack("Ic", a*b, 's')
+    def run_benchmark(host, port):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((host, port))
 
-        s.sendall(str_buffer) # send the 240 queries at once as a single packet
-        str_buffer = "" # Empty out the buffer.
-        s.recv(1250) # get all the responses so the API doesn't block.
+        # Warmup — discard these timings
+        for a in range(1, WARMUP_BATCHES + 1):
+            buf = b""
+            for b in range(1, QUERIES_PER_BATCH + 1):
+                buf += struct.pack("Ic", a * b, b's')
+            s.sendall(buf)
+            recv_exact(s, RESPONSE_SIZE)
 
-    s.close()
+        # Timed run
+        batch_times = []
+        queries = 0
 
-    print "Made %d individual calls to the server" % runs
+        t_start = time.perf_counter()
+        for a in range(1, BATCHES + 1):
+            buf = b""
+            for b in range(1, QUERIES_PER_BATCH + 1):
+                buf += struct.pack("Ic", a * b, b's')
+
+            t_batch = time.perf_counter()
+            s.sendall(buf)
+            recv_exact(s, RESPONSE_SIZE)
+            batch_times.append(time.perf_counter() - t_batch)
+
+            queries += QUERIES_PER_BATCH
+
+        elapsed = time.perf_counter() - t_start
+        s.close()
+
+        return queries, elapsed, batch_times
+
+    run_results = []
+    for run in range(1, NUM_RUNS + 1):
+        queries, elapsed, batch_times = run_benchmark(host, port)
+        qps = queries / elapsed
+        run_results.append(qps)
+
+        print("Run %d: %d queries in %.3fs (%.0f queries/sec)" %
+              (run, queries, elapsed, qps))
+        print("  batch latency — min: %.4fs  max: %.4fs  avg: %.4fs  median: %.4fs" %
+              (min(batch_times), max(batch_times),
+               statistics.mean(batch_times), statistics.median(batch_times)))
+
+    print("\nSummary over %d runs:" % NUM_RUNS)
+    print("  median throughput: %.0f queries/sec" % statistics.median(run_results))
+    print("  min: %.0f  max: %.0f" % (min(run_results), max(run_results)))
 

@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 
   printf("Awaiting connections.\n");
 
-  sigset(SIGPIPE, SIG_IGN);
+  signal(SIGPIPE, SIG_IGN);
 
   while (1)
   {
