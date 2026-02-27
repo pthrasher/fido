@@ -69,7 +69,7 @@ void* socketHandler(struct SHArgs *shargs) {
   char error_char = 'e';
 
 
-  while ((byteCount = recv(*clientSocket, &msg, 5, 0)) > 0) {
+  while ((byteCount = recv(*clientSocket, &msg, 5, MSG_WAITALL)) == 5) {
 
     /* printf("got data\n"); */
 
